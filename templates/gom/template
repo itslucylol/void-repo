@@ -1,0 +1,33 @@
+# Template file for 'gom'
+pkgname=gom
+version=0.5.6
+revision=1
+#archs="i686 x86_64"
+#build_wrksrc=
+build_style=meson
+configure_args="-Denable-gtk-doc=false"
+#make_build_args=""
+#make_install_args=""
+#conf_files=""
+#make_dirs="/var/log/dir 0755 root root"
+hostmakedepends="pkg-config glib-devel vala gobject-introspection"
+makedepends="glib-devel sqlite-devel libdex-devel gdk-pixbuf-devel"
+depends=""
+short_desc="GObject Data Mapper"
+maintainer="Lucy <87684856+itslucylol@users.noreply.github.com>"
+license="LGPL-2.1-or-later"
+homepage="https://gitlab.gnome.org/GNOME/gom"
+#changelog=""
+distfiles="https://gitlab.gnome.org/GNOME/gom/-/archive/${version}/gom-${version}.tar.gz"
+checksum=0f091c15d06bed82bcac1d079a87e0bbab4f78f90ec135fdf71050b742d92f22
+
+gom-devel_package() {
+	depends="${sourcepkg}>=${version}_${revision} ${makedepends}"
+	short_desc+=" - development files"
+	pkg_install() {
+		vmove usr/include
+		vmove usr/lib/pkgconfig
+		vmove "usr/lib/*.so"
+		vmove usr/share/gir-1.0
+	}
+}
