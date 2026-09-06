@@ -1,33 +1,35 @@
 # Template file for 'gom'
 pkgname=gom
 version=0.5.6
-revision=1
-#archs="i686 x86_64"
-#build_wrksrc=
+revision=7
 build_style=meson
-configure_args="-Denable-gtk-doc=false"
-#make_build_args=""
-#make_install_args=""
-#conf_files=""
-#make_dirs="/var/log/dir 0755 root root"
-hostmakedepends="pkg-config glib-devel vala gobject-introspection"
-makedepends="glib-devel sqlite-devel libdex-devel gdk-pixbuf-devel"
-depends=""
+build_helper="gir"
+configure_args="-Denable-introspection=$(vopt_if gir true false)
+ -Denable-gtk-doc=false"
+pycompile_module="gi"
+hostmakedepends="pkg-config"
+makedepends="sqlite-devel gettext-devel libglib-devel gdk-pixbuf-devel
+ $(vopt_if gir 'gobject-introspection python3-gobject-devel')"
 short_desc="GObject Data Mapper"
 maintainer="Lucy <87684856+itslucylol@users.noreply.github.com>"
 license="LGPL-2.1-or-later"
-homepage="https://gitlab.gnome.org/GNOME/gom"
-#changelog=""
+homepage="https://wiki.gnome.org/Projects/Gom"
 distfiles="https://gitlab.gnome.org/GNOME/gom/-/archive/${version}/gom-${version}.tar.gz"
 checksum=0f091c15d06bed82bcac1d079a87e0bbab4f78f90ec135fdf71050b742d92f22
 
+# Package build options
+build_options="gir"
+build_options_default="gir"
+
 gom-devel_package() {
-	depends="${sourcepkg}>=${version}_${revision} ${makedepends}"
-	short_desc+=" - development files"
-	pkg_install() {
-		vmove usr/include
-		vmove usr/lib/pkgconfig
-		vmove "usr/lib/*.so"
-		vmove usr/share/gir-1.0
-	}
+        depends="libglib-devel ${sourcepkg}>=${version}_${revision}"
+        short_desc+=" - development files"
+        pkg_install() {
+                vmove usr/include
+                vmove usr/lib/pkgconfig
+                vmove "usr/lib/*.so"
+                if [ "$build_option_gir" ]; then
+                        vmove usr/share/gir-1.0
+                fi
+        }
 }
